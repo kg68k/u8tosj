@@ -1,7 +1,7 @@
 .title u8tosj - UTF-8 to Shift_JIS converter
 
 # This file is part of u8tosj, UTF-8 to Shift_JIS converter
-# Copyright (C) 2021 Tachibana Erik
+# Copyright (C) 2021-2022 TcbnErik
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -553,10 +553,12 @@ PrintHexLongword:
 .even
 
 Title:
-  .dc.b 'u8tosj 1.0.0',0
+  .dc.b 'u8tosj 1.0.1',0
 
 InvalidUtf8Sequence:
   .dc.b 'Invalid byte sequence in UTF-8:',0
+NewLine:
+  .dc.b CR,LF,0
 
 SetBlockErrorMsg:
   .dc.b 'Setblock error',CR,LF,0
@@ -589,8 +591,6 @@ FileWriteResultMsg:
   .dc.b ': DOS _Write',CR,LF,0
 SjisLengthMsg:
   .dc.b ': Shift_JIS length',CR,LF,0
-NewLine:
-  .dc.b CR,LF,0
 
 .endif
 

@@ -22,4 +22,4 @@ u8tosj < input-file > output-file
 GNU General Public License version 3 or later
 
 ## Author
-立花@桑島技研
+TcbnErik / 立花@桑島技研
