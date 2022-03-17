@@ -1,49 +1,53 @@
 # Makefile for u8tosj
 
-AS      = has
+AS	= has
 ASFLAGS	= -w
-LD      = hlk
+LD	= hlk
 LDFLAGS	=
-MKDIR_P = mkdir -p
+
+SRCS	= u8tosj.s table.s
+OBJS	= $(SRCS:.s=.o)
+U8TOSJ_R = u8tosj.r
+U8TOSJ_X = u8tosj.x
+DOCS	= README.txt LICENSE
+
+SRC_ZIP	= src.zip
+U8TOSJ_ZIP = u8tosj.zip
+ARCS	= $(SRC_ZIP) $(U8TOSJ_ZIP)
 
 
-OBJ_DIR = o
-OBJS = $(OBJ_DIR)/u8tosj.o $(OBJ_DIR)/table.o
+.PHONY: all clean
 
-EXES = u8tosj.r u8tosj.x
-
-
-.PHONY: all directories clean distclean
-
-#all: directories u8tosj.r
-all: directories u8tosj.x
-
-directories: $(OBJ_DIR)
-
-$(OBJ_DIR):
-	$(MKDIR_P) $(OBJ_DIR)
+all: $(U8TOSJ_R)
 
 
-u8tosj.r: $(OBJS)
+$(U8TOSJ_ZIP): $(SRC_ZIP) $(DOCS) $(U8TOSJ_R)
+	rm -f $@
+	zip -9 $@ $^
+
+$(SRC_ZIP): Makefile $(SRCS)
+	rm -f $@
+	zip -9 $@ $^
+
+LICENSE: ../LICENSE $(U8TOSJ_R)
+	./$(U8TOSJ_R) < $< > $@
+
+README.txt: ../README.md $(U8TOSJ_R)
+	./$(U8TOSJ_R) < $< > $@
+
+
+$(U8TOSJ_R): $(OBJS)
 	$(LD) $(LDFLAGS) -r -o $@ $^
 
-u8tosj.x: $(OBJS)
+$(U8TOSJ_X): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-
-$(OBJ_DIR)/%.o: %.s
+%.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $^
-
-$(OBJ_DIR)/u8tosj.o: u8tosj.s
-$(OBJ_DIR)/table.o: table.s
 
 
 clean:
-	rm -f $(OBJS)
-
-distclean:
-	rm -f $(OBJS) $(EXES)
-	rm $(OBJ_DIR)
+	rm -f $(U8TOSJ_R) $(U8TOSJ_X) $(OBJS) $(DOCS) $(ARCS)
 
 
 # EOF
