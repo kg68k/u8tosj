@@ -1,6 +1,6 @@
 # Makefile for u8tosj
 
-AS	= has
+AS	= has060
 ASFLAGS	= -w
 LD	= hlk
 LDFLAGS	=
