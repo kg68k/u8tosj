@@ -1,3 +1,5 @@
+# make table from u2stbl.txt
+
 pattern = /([0-9A-F]{2})([0-9A-F]{2}) ([0-9A-F]{4})/i
 
 STDOUT.binmode
@@ -6,6 +8,8 @@ u2s_table = Array.new(0x100) { Array.new(0x100) }
 num_table = Array.new(0x100, 0)
 
 total_bytes = 0
+
+static_buffer_alloc = ARGV.include?("-s")
 
 file = File.open('u2stbl.txt')
 file.each_line do |line|
@@ -24,14 +28,18 @@ puts ".data"
 puts ".quad"
 puts ""
 
-puts "U2STableBufferSize::"
 # 各Shift_JIS文字配列へのポインタ配列×サイズ
 pointer_buf_size = 256 * 4
 # 必要なShift_JIS文字配列の数(有効なコードポイントが皆無のブロック用に+1)×サイズ
 sj_table_size = (256 - num_table.count(0) + 1) * 256 * 2
-puts ".dc.l #{pointer_buf_size+sj_table_size}"
-total_bytes += 4
-puts ""
+total_buffer_size = pointer_buf_size + sj_table_size
+
+if not static_buffer_alloc
+  puts "U2STableBufferSize::"
+  puts ".dc.l #{total_buffer_size}"
+  total_bytes += 4
+  puts ""
+end
 
 puts "U2STableBitmap::"
 u2s_table.each_slice(32) do |longword|
@@ -69,6 +77,15 @@ u2s_table.each_with_index do |array, high|
   total_bytes += sj.count * 2
 end
 puts ""
+
+if static_buffer_alloc
+  puts ".bss"
+  puts ".quad"
+  puts ""
+  puts "U2STableBuffer::"
+  puts ".ds.b #{total_buffer_size}"
+  puts ""
+end
 
 puts ";size=#{total_bytes}"
 puts ".end"
